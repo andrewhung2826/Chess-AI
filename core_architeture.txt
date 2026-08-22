@@ -1,0 +1,109 @@
+chess-ai/
+│
+├── main.py
+│
+├── core/                         # Chess engine thuần
+│   ├── board.py
+│   ├── square.py
+│   ├── move.py
+│   ├── game_state.py
+│   └── constants.py
+│
+├── pieces/
+│   ├── piece.py
+│   ├── pawn.py
+│   ├── knight.py
+│   ├── bishop.py
+│   ├── rook.py
+│   ├── queen.py
+│   └── king.py
+│
+├── rules/                        # Luật cờ
+│   ├── move_rules.py
+│   ├── attack_rules.py
+│   ├── check_rules.py
+│   └── game_rules.py
+│
+├── gui/
+│   ├── game_window.py
+│   ├── board_view.py
+│   ├── dragger.py
+│   └── input_handler.py
+│
+├── ai/                           # AI chơi cờ
+│   ├── base_agent.py
+│   ├── random_agent.py
+│   │
+│   ├── classical/
+│   │   ├── minimax_agent.py
+│   │   ├── alpha_beta.py
+│   │   └── evaluation.py
+│   │
+│   └── neural/
+│       ├── neural_agent.py
+│       ├── policy_value_model.py
+│       └── encoder.py
+│
+├── training/                     # Pipeline train
+│   ├── self_play.py
+│   ├── dataset.py
+│   ├── trainer.py
+│   ├── replay_buffer.py
+│   ├── reward.py
+│   └── config.py
+│
+├── search/                       # Search tree
+│   ├── minimax.py
+│   ├── alpha_beta.py
+│   └── mcts.py
+│
+├── models/                       # Neural Network
+│   ├── policy_network.py
+│   ├── value_network.py
+│   └── policy_value_network.py
+│
+├── utils/
+│   ├── notation.py
+│   ├── serialization.py
+│   └── logger.py
+│
+├── tests/
+│   ├── test_board.py
+│   ├── test_moves.py
+│   ├── test_rules.py
+│   └── test_game_state.py
+│
+├── checkpoints/
+│
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── self_play/
+│
+├── requirements.txt
+└── README.md
+
+
+                 ┌──────────────┐
+                 │     GUI      │
+                 └──────┬───────┘
+                        │
+                        ▼
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+│      AI      │──▶│     CORE     │◀──│    RULES     │
+│ Random/MCTS  │   │ Board/State  │   │ Chess Rules  │
+└──────┬───────┘   │ Move         │   └──────────────┘
+       │           └──────┬───────┘
+       │                  │
+       ▼                  ▼
+┌──────────────┐   ┌──────────────┐
+│   TRAINING   │   │    SEARCH    │
+│ Self-play    │   │ Minimax/MCTS │
+│ Dataset      │   └──────────────┘
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│    MODELS    │
+│ PyTorch NN   │
+└──────────────┘
