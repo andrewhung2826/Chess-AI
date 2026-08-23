@@ -1,23 +1,25 @@
-from chess_engine.board import Board
+from chess_engine.game_state import GameState
 from chess_engine.square import Square
 from chess_engine.move import Move
 
 
 def main():
-    board = Board()
+    game = GameState()
 
-    print("BEFORE:")
-    board.print_board()
+    print("TURN:", game.turn)
 
-    initial = Square(6, 4)
-    final = Square(4, 4)
+    # e2 -> e4
+    move = Move(
+        Square(6, 4),
+        Square(4, 4)
+    )
 
-    move = Move(initial, final)
+    success = game.make_move(move)
 
-    board.move(move)
+    print("MOVE SUCCESS:", success)
+    print("TURN:", game.turn)
 
-    print("\nAFTER:")
-    board.print_board()
+    game.board.print_board()
 
 
 if __name__ == "__main__":
