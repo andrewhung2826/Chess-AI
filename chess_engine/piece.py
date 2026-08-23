@@ -15,6 +15,7 @@ class Pawn(Piece):
 
     def __init__(self, color):
         super().__init__("pawn", color, "P")
+        self.dir = -1 if color == "white" else 1
 
 
 class Knight(Piece):

@@ -59,8 +59,8 @@ class Board:
         initial = move.initial 
         final = move.final 
 
-        piece = self.squares[initial][final].piece 
-        self.squares[initial.row][initial.col] = None
-        self.squares[final.row][final.col] = piece
+        piece = self.squares[initial.row][initial.col].piece 
+        self.squares[initial.row][initial.col].piece = None
+        self.squares[final.row][final.col].piece = piece
 
         piece.moved = True

@@ -2,7 +2,7 @@ chess-ai/
 │
 ├── main.py
 │
-├── core/                         # Chess engine thuần
+├── chess_engine/                         # Chess engine thuần
 │   ├── board.py
 │   ├── square.py
 │   ├── move.py
