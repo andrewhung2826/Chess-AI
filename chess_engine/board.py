@@ -61,24 +61,47 @@ class Board:
         initial = move.initial 
         final = move.final 
 
-        piece = self.squares[initial.row][initial.col].piece 
+        initial_square = self.squares[initial.row][initial.col]
+        final_square = self.squares[final.row][final.col]
+
+        piece = initial_square.piece 
+
+        initial_square.piece = None
 
         # EN PASSANT
         if move.is_en_passant:
-            captured_row = initial.row 
-            captured_col = final.col 
+            self.squares[initial.row][final.col].piece = None 
 
-            self.squares[captured_row][captured_col].piece = None 
+        # NORMAL MOVE
+        final_square.piece = piece
 
-        # REMOVE INITIAL
-        self.squares[initial.row][initial.col].piece = None
+        # CASTLING
+        if move.is_castling:
+
+            # KINGSIDE
+            if final.col > initial.col:
+                rook_initial_col = 7
+                rook_final_col = 5
+
+            # QUEENSIDE
+            else:
+                rook_initial_col = 0
+                rook_final_col = 3
+
+            rook = self.squares[initial.row][rook_initial_col].piece
+
+            self.squares[initial.row][rook_initial_col].piece = None
+
+            self.squares[initial.row][rook_final_col].piece = rook
+
+            rook.moved = True
 
         # PROMOTION
         if isinstance(piece, Pawn) and move.promotion:
-            piece = self.promote_pawn(move, piece)
+            promoted_piece = self.promote_pawn(move, piece)
 
-        # PLACE ON FINAL
-        self.squares[final.row][final.col].piece = piece
+            final_square.piece = promoted_piece
+            piece = promoted_piece
 
         piece.moved = True
 

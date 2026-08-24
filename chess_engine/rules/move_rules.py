@@ -7,7 +7,8 @@ class MoveRules:
 
 
     @staticmethod
-    def get_moves(board, row, col, piece):
+    def get_moves(board, row, col, piece,
+                  include_castling=True):
 
         if isinstance(piece, Pawn):
             return MoveRules.pawn_moves(board, row, col, piece)
@@ -25,7 +26,7 @@ class MoveRules:
             return MoveRules.queen_moves(board, row, col, piece)
 
         elif isinstance(piece, King):
-            return MoveRules.king_moves(board, row, col, piece)
+            return MoveRules.king_moves(board, row, col, piece, include_castling)
 
 
     @staticmethod
@@ -278,7 +279,7 @@ class MoveRules:
 
 
     @staticmethod
-    def king_moves(board, row, col, piece):
+    def king_moves(board, row, col, piece, include_castling=True):
 
         moves = []
 
@@ -309,4 +310,119 @@ class MoveRules:
 
                     moves.append(move)
 
+        if include_castling:
+            MoveRules.add_castling_moves(
+                board, row, col, piece, moves
+            )
+
         return moves
+
+
+    @staticmethod
+    def add_castling_moves(board, row, col, piece, moves):
+
+        from .check_rules import CheckRules
+
+        # King đã từng di chuyển
+        if piece.moved:
+            return
+
+        # King hiện đang bị check
+        if CheckRules.is_square_attacked(
+            board,
+            row,
+            col,
+            piece.color
+        ):
+            return
+
+        # ========================================
+        # KINGSIDE CASTLING
+        # ========================================
+
+        rook_col = 7
+
+        rook = board.squares[row][rook_col].piece
+
+        if (
+            isinstance(rook, Rook)
+            and rook.color == piece.color
+            and not rook.moved
+        ):
+
+            # Giữa King và Rook phải trống
+            if (
+                board.squares[row][5].is_empty()
+                and board.squares[row][6].is_empty()
+            ):
+
+                # King không được đi qua / đi vào ô bị attack
+                if (
+                    not CheckRules.is_square_attacked(
+                        board,
+                        row,
+                        5,
+                        piece.color
+                    )
+                    and
+                    not CheckRules.is_square_attacked(
+                        board,
+                        row,
+                        6,
+                        piece.color
+                    )
+                ):
+
+                    moves.append(
+                        Move(
+                            Square(row, col),
+                            Square(row, 6),
+                            is_castling=True
+                        )
+                    )
+
+        # ========================================
+        # QUEENSIDE CASTLING
+        # ========================================
+
+        rook_col = 0
+
+        rook = board.squares[row][rook_col].piece
+
+        if (
+            isinstance(rook, Rook)
+            and rook.color == piece.color
+            and not rook.moved
+        ):
+
+            # Giữa King và Rook phải trống
+            if (
+                board.squares[row][1].is_empty()
+                and board.squares[row][2].is_empty()
+                and board.squares[row][3].is_empty()
+            ):
+
+                # King đi qua d-file và đến c-file
+                if (
+                    not CheckRules.is_square_attacked(
+                        board,
+                        row,
+                        3,
+                        piece.color
+                    )
+                    and
+                    not CheckRules.is_square_attacked(
+                        board,
+                        row,
+                        2,
+                        piece.color
+                    )
+                ):
+
+                    moves.append(
+                        Move(
+                            Square(row, col),
+                            Square(row, 2),
+                            is_castling=True
+                        )
+                    )

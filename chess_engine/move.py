@@ -4,11 +4,16 @@
 class Move:
 
     def __init__(self, initial, final, 
-                 promotion=None, is_en_passant=False):
+                 promotion=None, 
+                 is_en_passant=False,
+                 is_castling=False):
+        
         self.initial = initial
         self.final = final
+
         self.promotion = promotion
         self.is_en_passant = is_en_passant
+        self.is_castling = is_castling
  
 
     def __eq__(self, other):
@@ -18,4 +23,5 @@ class Move:
             and self.final == other.final
             and self.promotion == other.promotion
             and self.is_en_passant == other.is_en_passant
+            and self.is_castling == other.is_castling
         )

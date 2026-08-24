@@ -1,5 +1,5 @@
 from .move_rules import MoveRules
-from chess_engine.piece import King
+from chess_engine.piece import King, Pawn
 from chess_engine.const import ROWS, COLS
 
 
@@ -8,44 +8,21 @@ class CheckRules:
     @staticmethod
     def is_check(board, color):
 
-        king = None
-        king_row = None
-        king_col = None 
-
         for row in range(ROWS):
             for col in range(COLS):
 
                 piece = board.squares[row][col].piece
 
-                if isinstance(piece, King) and piece.color == color:
-                    king = piece
-                    king_row = row 
-                    king_col = col 
-                    break 
-
-            if king:
-                break 
-
-        if king is None:
-            return False
-
-
-        # Kiem tra quan dich
-        for row in range(ROWS):
-            for col in range(COLS):
-
-                piece = board.squares[row][col].piece
-
-                if piece and piece.color != color:
-
-                    enemy_moves = MoveRules.get_moves(board, row, col, piece)
-
-                    for move in enemy_moves:
-                        if (
-                            move.final.row == king_row and 
-                            move.final.col == king_col 
-                        ):
-                            return True 
+                if (
+                    isinstance(piece, King)
+                    and piece.color == color
+                ):
+                    return CheckRules.is_square_attacked(
+                        board,
+                        row,
+                        col,
+                        color
+                    )
 
         return False
 
@@ -73,6 +50,25 @@ class CheckRules:
 
                 en_passant_piece = en_passant_square.piece
 
+            # CASTLING 
+            rook = None 
+            rook_initial_square = None 
+            rook_final_square = None 
+            rook_final_piece = None
+
+            if move.is_castling:
+
+                # KINGSIDE
+                if final.col > initial.col:
+                    rook_initial_square = board.squares[initial.row][7]
+                    rook_final_square = board.squares[initial.row][5]
+                # QUEENSIDE
+                else:
+                    rook_initial_square = board.squares[initial.row][0]
+                    rook_final_square = board.squares[initial.row][3]
+
+                rook = rook_initial_square.piece 
+                rook_piece_square = rook_final_square.piece
 
             # MAKE MOVE
             initial_square.piece = None
@@ -80,12 +76,19 @@ class CheckRules:
             if move.is_en_passant:
                 board.squares[initial.row][final.col].piece = None
 
-            # PROMOTION
-            moved_piece = piece 
-            if move.promotion is not None:
-                moved_piece = board.promotion_pawn(move, piece)
+            # MOVE KING/ NORMAL PIECE
+            final_square.piece = piece 
 
-            final_square.piece = moved_piece
+            # CASTLING ROOK MOVE
+            if move.is_castling:
+                rook_initial_square.piece = None 
+                rook_final_square.piece = rook
+
+            # PROMOTION
+            if move.promotion is not None:
+                moved_piece = board.promote_pawn(move, piece)
+
+                final_square.piece = moved_piece
 
             # CHECK
             in_check = CheckRules.is_check(board, piece.color)
@@ -94,11 +97,64 @@ class CheckRules:
             initial_square.piece = piece
             final_square.piece = captured_piece
 
+            # RESTORE EN PASSANT
             if move.is_en_passant:
                 board.squares[initial.row][final.col].piece = en_passant_piece
+
+            # RESTORE CASTLING ROOK
+            if move.is_castling:
+                rook_initial_square.piece = rook 
+                rook_final_square.piece = rook_final_piece
+
 
             # LEGAL MOVE
             if not in_check:
                 legal_moves.append(move)
 
         return legal_moves
+
+
+    @staticmethod
+    def is_square_attacked(board, row, col, color):
+
+        # KIEM TRA SQUARE CO BI DOI PHUONG TAN CONG KHONG
+
+        enemy_color = "black" if color == "white" else "white"
+
+        for enemy_row in range(ROWS):
+            for enemy_col in range(COLS):
+
+                piece = board.squares[enemy_row][enemy_col].piece
+
+                if piece is None:
+                    continue
+
+                if piece.color != enemy_color:
+                    continue
+
+                # PAWN ATTACK
+                if isinstance(piece, Pawn):
+
+                    attack_row = enemy_row + piece.dir 
+
+                    if (
+                        attack_row == row 
+                        and abs(enemy_col - col) == 1
+                    ):
+                        return True
+
+                    continue
+
+                # OTHER PIECE
+                moves = MoveRules.get_moves(
+                    board, enemy_row, enemy_col, piece, include_castling=False 
+                )
+
+                for move in moves:
+                    if (
+                        move.final.row == row 
+                        and move.final.col == col 
+                    ):
+                        return True 
+
+        return False
