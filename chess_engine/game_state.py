@@ -1,4 +1,5 @@
 from .board import Board
+from .const import ROWS, COLS
 from .rules.move_rules import MoveRules
 from .rules.check_rules import CheckRules
 from .rules.game_rules import GameRules
@@ -13,6 +14,7 @@ class GameState:
 
         self.game_over = False
         self.result = None
+
 
     def get_legal_moves(self, row, col):
         square = self.board.squares[row][col]
@@ -34,6 +36,40 @@ class GameState:
 
         return legal_moves
 
+
+    def get_all_legal_moves(self, color=None):
+
+        if color is None:
+            color = self.turn 
+
+        all_moves = []
+
+        for row in range(ROWS):
+            for col in range(COLS):
+
+                square = self.board.squares[row][col]
+
+                if square.is_empty():
+                    continue
+
+                piece = square.piece 
+
+                if piece.color != color:
+                    continue
+
+                pseudo_moves = MoveRules.get_moves(
+                    self.board, row, col, piece
+                )
+
+                legal_moves = CheckRules.filter_legal_moves(
+                    self.board, piece, pseudo_moves
+                )
+
+                all_moves.extend(legal_moves)
+
+        return all_moves
+
+
     def make_move(self, move):
 
         # CHECK GAME OVER
@@ -47,6 +83,7 @@ class GameState:
         if piece is None:
             return False
 
+        # WRONG TURN
         if piece.color != self.turn:
             return False
 
@@ -86,3 +123,7 @@ class GameState:
         elif GameRules.is_stalemate(self.board, self.turn):
             self.game_over = True
             self.result = "draw by stalemate"
+
+        else:
+            self.game_over = False
+            self.result = None
