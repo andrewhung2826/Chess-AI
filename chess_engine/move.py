@@ -3,15 +3,19 @@
 
 class Move:
 
-    def __init__(self, initial, final):
+    def __init__(self, initial, final, 
+                 promotion=None, is_en_passant=False):
         self.initial = initial
         self.final = final
+        self.promotion = promotion
+        self.is_en_passant = is_en_passant
  
 
     def __eq__(self, other):
         return (
-            self.initial.row == other.initial.row
-            and self.initial.col == other.initial.col
-            and self.final.row == other.final.row
-            and self.final.col == other.final.col
+            isinstance(other, Move)
+            and self.initial == other.initial
+            and self.final == other.final
+            and self.promotion == other.promotion
+            and self.is_en_passant == other.is_en_passant
         )

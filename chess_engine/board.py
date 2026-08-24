@@ -10,6 +10,8 @@ class Board:
         self.add_pieces("white")
         self.add_pieces("black")
 
+        self.last_move = None
+
 
     def create_board(self):
         return [
@@ -60,7 +62,44 @@ class Board:
         final = move.final 
 
         piece = self.squares[initial.row][initial.col].piece 
+
+        # EN PASSANT
+        if move.is_en_passant:
+            captured_row = initial.row 
+            captured_col = final.col 
+
+            self.squares[captured_row][captured_col].piece = None 
+
+        # REMOVE INITIAL
         self.squares[initial.row][initial.col].piece = None
+
+        # PROMOTION
+        if isinstance(piece, Pawn) and move.promotion:
+            piece = self.promote_pawn(move, piece)
+
+        # PLACE ON FINAL
         self.squares[final.row][final.col].piece = piece
 
         piece.moved = True
+
+        self.last_move = move
+
+
+    def promote_pawn(self, move, piece):
+
+        if move.promotion is None:
+            return piece 
+
+        color = piece.color 
+
+        if move.promotion == "queen":
+            return Queen(color)
+
+        elif move.promotion == "rook":
+            return Rook(color)
+
+        elif move.promotion == "bishop":
+            return Bishop(color)
+
+        elif move.promotion == "knight":
+            return Knight(color)

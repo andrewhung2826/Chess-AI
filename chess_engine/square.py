@@ -30,3 +30,10 @@ class Square:
                 return False
 
         return True
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, Square)
+            and self.row == other.row 
+            and self.col == other.col
+        )

@@ -60,18 +60,42 @@ class CheckRules:
             initial = move.initial
             final = move.final 
 
+            initial_square = board.squares[initial.row][initial.col]
+            final_square = board.squares[final.row][final.col]
+
             captured_piece = board.squares[final.row][final.col].piece 
 
+            en_passant_piece = None
+
+            if move.is_en_passant:
+
+                en_passant_square = board.squares[initial.row][final.col]
+
+                en_passant_piece = en_passant_square.piece
+
+
             # MAKE MOVE
-            board.squares[initial.row][initial.col].piece = None 
-            board.squares[final.row][final.col].piece = piece 
+            initial_square.piece = None
+
+            if move.is_en_passant:
+                board.squares[initial.row][final.col].piece = None
+
+            # PROMOTION
+            moved_piece = piece 
+            if move.promotion is not None:
+                moved_piece = board.promotion_pawn(move, piece)
+
+            final_square.piece = moved_piece
 
             # CHECK
             in_check = CheckRules.is_check(board, piece.color)
 
             # UNMAKE MOVE 
-            board.squares[initial.row][initial.col].piece = piece
-            board.squares[final.row][final.col].piece = captured_piece
+            initial_square.piece = piece
+            final_square.piece = captured_piece
+
+            if move.is_en_passant:
+                board.squares[initial.row][final.col].piece = en_passant_piece
 
             # LEGAL MOVE
             if not in_check:
