@@ -3,7 +3,7 @@ import unittest
 from chess_engine.game_state import GameState
 from chess_engine.square import Square
 from chess_engine.move import Move
-from chess_engine.piece import King, Rook
+from chess_engine.piece import King, Rook, Queen
 
 
 class TestGameState(unittest.TestCase):
@@ -168,17 +168,46 @@ class TestGameState(unittest.TestCase):
             for col in range(8):
                 game.board.squares[row][col].piece = None
 
-        # White King c6
-        game.board.squares[2][2].piece = King("white")
+        # White King a8
+        game.board.squares[0][0].piece = King("white")
 
-        # White Rook a7
-        game.board.squares[1][0].piece = Rook("white")
+        # Black Queen b7
+        game.board.squares[1][1].piece = Queen("black")
 
-        # Black King a8
-        game.board.squares[0][0].piece = King("black")
+        # Black King b6
+        game.board.squares[2][1].piece = King("black")
 
-        # Black's turn
-        game.turn = "black"
+        game.turn = "white"
+
+        game.update_game_status()
+
+        self.assertTrue(game.game_over)
+
+        self.assertEqual(
+            game.result,
+            "black wins by checkmate"
+        )
+
+    def test_stalemate_updates_game_status(self):
+
+        game = GameState()
+
+        # Clear board
+        for row in range(8):
+            for col in range(8):
+                game.board.squares[row][col].piece = None
+
+        # White King a8
+        game.board.squares[0][0].piece = King("white")
+
+        # Black Queen b6
+        game.board.squares[2][1].piece = Queen("black")
+
+        # Black King c7
+        game.board.squares[1][2].piece = King("black")
+
+        # White's turn
+        game.turn = "white"
 
         game.update_game_status()
 
@@ -188,7 +217,7 @@ class TestGameState(unittest.TestCase):
 
         self.assertEqual(
             game.result,
-            "white wins by checkmate"
+            "draw by stalemate"
         )
 
 if __name__ == "__main__":
