@@ -1,6 +1,6 @@
 from .move_rules import MoveRules
-from chess_engine.piece import King, Pawn
-from chess_engine.const import ROWS, COLS
+from chess_engine.game.piece import King, Pawn
+from chess_engine.game.const import ROWS, COLS
 
 
 class CheckRules:

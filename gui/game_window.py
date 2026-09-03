@@ -1,8 +1,8 @@
 import pygame
 from pathlib import Path
 
-from chess_engine.const import *
-from chess_engine.game_state import GameState
+from chess_engine.game.const import *
+from chess_engine.game.game_state import GameState
 
 from .board_view import BoardView
 from .dragger import Dragger

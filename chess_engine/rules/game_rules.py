@@ -1,7 +1,7 @@
 from .move_rules import MoveRules
 from .check_rules import CheckRules
 
-from chess_engine.const import ROWS, COLS 
+from chess_engine.game.const import ROWS, COLS 
 
 
 

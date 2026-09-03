@@ -1,9 +1,9 @@
 import unittest
 
-from chess_engine.board import Board
-from chess_engine.square import Square
-from chess_engine.move import Move
-from chess_engine.piece import Pawn, Rook, King, Queen
+from chess_engine.game.board import Board
+from chess_engine.game.square import Square
+from chess_engine.game.move import Move
+from chess_engine.game.piece import Pawn, Rook, King, Queen
 
 from chess_engine.rules.move_rules import MoveRules
 from chess_engine.rules.check_rules import CheckRules

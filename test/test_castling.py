@@ -1,8 +1,8 @@
 import unittest
 
-from chess_engine.board import Board
-from chess_engine.square import Square
-from chess_engine.piece import King, Rook, Bishop
+from chess_engine.game.board import Board
+from chess_engine.game.square import Square
+from chess_engine.game.piece import King, Rook, Bishop
 from chess_engine.rules.move_rules import MoveRules
 
 

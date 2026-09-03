@@ -1,8 +1,8 @@
 from .board import Board
 from .const import ROWS, COLS
-from .rules.move_rules import MoveRules
-from .rules.check_rules import CheckRules
-from .rules.game_rules import GameRules
+from ..rules.move_rules import MoveRules
+from ..rules.check_rules import CheckRules
+from ..rules.game_rules import GameRules
 
 
 

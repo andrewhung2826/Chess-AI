@@ -1,6 +1,6 @@
-from chess_engine.piece import Pawn, Knight, Bishop, Rook, Queen, King
-from chess_engine.square import Square
-from chess_engine.move import Move
+from chess_engine.game.piece import Pawn, Knight, Bishop, Rook, Queen, King
+from chess_engine.game.square import Square
+from chess_engine.game.move import Move
 
 
 class MoveRules:

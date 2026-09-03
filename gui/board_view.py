@@ -1,7 +1,7 @@
 from pathlib import Path
 import pygame
 
-from chess_engine.const import ROWS, COLS, SQSIZE
+from chess_engine.game.const import ROWS, COLS, SQSIZE
 from chess_engine.rules.check_rules import CheckRules
 
 

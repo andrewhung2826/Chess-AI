@@ -1,9 +1,9 @@
 import unittest
 
-from chess_engine.game_state import GameState
-from chess_engine.square import Square
-from chess_engine.move import Move
-from chess_engine.piece import King, Rook, Queen
+from chess_engine.game.game_state import GameState
+from chess_engine.game.square import Square
+from chess_engine.game.move import Move
+from chess_engine.game.piece import King, Rook, Queen
 
 
 class TestGameState(unittest.TestCase):
