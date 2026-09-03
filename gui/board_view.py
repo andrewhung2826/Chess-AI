@@ -2,7 +2,7 @@ from pathlib import Path
 import pygame
 
 from chess_engine.const import ROWS, COLS, SQSIZE
-
+from chess_engine.rules.check_rules import CheckRules
 
 
 class BoardView:
@@ -394,3 +394,193 @@ class BoardView:
         ) // SQSIZE
 
         return promotion_pieces[index]
+
+
+    def draw_last_move(self, screen, game_state):
+
+        move = game_state.last_move
+
+        if move is None:
+            return
+
+        squares = [
+            move.initial,
+            move.final
+        ]
+
+        for square in squares:
+
+            rect = pygame.Rect(
+                square.col * SQSIZE,
+                square.row * SQSIZE,
+                SQSIZE,
+                SQSIZE
+            )
+
+            overlay = pygame.Surface(
+                (SQSIZE, SQSIZE),
+                pygame.SRCALPHA
+            )
+
+            overlay.fill((255, 255, 0, 80))
+
+            screen.blit(
+                overlay,
+                rect.topleft
+            )
+
+
+    def draw_check(self, screen, board, turn):
+
+        # Nếu bên hiện tại không bị check
+        if not CheckRules.is_check(board, turn):
+            return
+
+        for row in range(ROWS):
+
+            for col in range(COLS):
+
+                square = board.squares[row][col]
+
+                if square.is_empty():
+                    continue
+
+                piece = square.piece
+
+                # Tìm King đang bị check
+                if (
+                    piece.name == "king"
+                    and piece.color == turn
+                ):
+
+                    rect = pygame.Rect(
+                        col * SQSIZE,
+                        row * SQSIZE,
+                        SQSIZE,
+                        SQSIZE
+                    )
+
+                    overlay = pygame.Surface(
+                        (SQSIZE, SQSIZE),
+                        pygame.SRCALPHA
+                    )
+
+                    overlay.fill((255, 0, 0, 120))
+
+                    screen.blit(
+                        overlay,
+                        rect.topleft
+                    )
+
+                    return
+
+
+    def move_to_text(self, move):
+
+        files = "abcdefgh"
+
+        initial = (
+            files[move.initial.col]
+            + str(8 - move.initial.row)
+        )
+
+        final = (
+            files[move.final.col]
+            + str(8 - move.final.row)
+        )
+
+        return f"{initial}-{final}"
+
+
+    def draw_move_history(self, screen, move_history):
+
+        board_width = SQSIZE * COLS
+
+        panel_x = board_width
+
+        panel_width = screen.get_width() - board_width
+
+        panel = pygame.Rect(
+            panel_x,
+            0,
+            panel_width,
+            screen.get_height()
+        )
+
+        pygame.draw.rect(
+            screen,
+            (40, 40, 40),
+            panel
+        )
+
+        title_font = pygame.font.SysFont(
+            "Arial",
+            24,
+            bold=True
+        )
+
+        move_font = pygame.font.SysFont(
+            "Arial",
+            20
+        )
+
+        title = title_font.render(
+            "MOVE HISTORY",
+            True,
+            (255, 255, 255)
+        )
+
+        title_rect = title.get_rect(
+            center=(
+                panel_x + panel_width // 2,
+                30
+            )
+        )
+
+        screen.blit(
+            title,
+            title_rect
+        )
+
+        y = 70
+
+        for index in range(
+            0,
+            len(move_history),
+            2
+        ):
+
+            move_number = index // 2 + 1
+
+            white_move = self.move_to_text(
+                move_history[index]
+            )
+
+            if index + 1 < len(move_history):
+
+                black_move = self.move_to_text(
+                    move_history[index + 1]
+                )
+
+            else:
+
+                black_move = ""
+
+            text = (
+                f"{move_number}.  "
+                f"{white_move:<8}"
+                f"{black_move}"
+            )
+
+            text_surface = move_font.render(
+                text,
+                True,
+                (255, 255, 255)
+            )
+
+            screen.blit(
+                text_surface,
+                (panel_x + 20, y)
+            )
+
+            y += 30

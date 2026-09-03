@@ -212,6 +212,10 @@ class GameWindow:
 
         self.board_view.draw_board(self.screen)
 
+        self.board_view.draw_last_move(self.screen, self.game_state)
+
+        self.board_view.draw_check(self.screen, self.game_state.board, self.game_state.turn)
+
         self.board_view.draw_coordinates(self.screen)
 
         self.board_view.draw_legal_moves(self.screen, self.game_state.board, self.dragger)
@@ -219,6 +223,8 @@ class GameWindow:
         self.board_view.draw_pieces(self.screen, self.game_state.board, self.dragger)
 
         self.board_view.draw_dragged_piece(self.screen, self.dragger)
+
+        self.board_view.draw_move_history(self.screen, self.game_state.move_history)
 
         self.board_view.draw_game_over(self.screen, self.game_state)
 

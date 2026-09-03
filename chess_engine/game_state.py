@@ -15,6 +15,10 @@ class GameState:
         self.game_over = False
         self.result = None
 
+        self.last_move = None
+
+        self.move_history = []
+
 
     def get_legal_moves(self, row, col):
         square = self.board.squares[row][col]
@@ -95,6 +99,10 @@ class GameState:
             return False
 
         self.board.move(move)
+
+        self.last_move = move
+
+        self.move_history.append(move)
 
         self.switch_turn()
 
